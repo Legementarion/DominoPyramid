@@ -1,4 +1,15 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'me.tatarka:gradle-retrolambda:3.3.0'
+    }
+}
+
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 25
@@ -10,6 +21,10 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
         release {
@@ -42,5 +57,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     //other
-    compile 'me.tatarka:gradle-retrolambda:3.2.5'
+    compile 'me.tatarka:gradle-retrolambda:3.3.0'
 }

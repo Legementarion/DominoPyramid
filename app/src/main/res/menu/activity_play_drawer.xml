@@ -5,15 +5,19 @@
         <item
             android:id="@+id/nav_game"
             android:icon="@drawable/game"
-            android:title="Новая игра" />
+            android:title="@string/new_game" />
     </group>
 
-    <item android:title="Настройки">
+    <item android:title="@string/param">
         <menu>
+            <item
+                android:id="@+id/nav_stats"
+                android:icon="@drawable/ic_menu_stats"
+                android:title="@string/stats" />
             <item
                 android:id="@+id/nav_help"
                 android:icon="@drawable/ic_menu_manage"
-                android:title="Help" />
+                android:title="@string/help" />
         </menu>
     </item>
 
@@ -21,7 +25,7 @@
         <item
             android:id="@+id/nav_exit"
             android:icon="@drawable/ic_menu_exit"
-            android:title="Выход" />
+            android:title="@string/exit" />
     </group>
 
 </menu>

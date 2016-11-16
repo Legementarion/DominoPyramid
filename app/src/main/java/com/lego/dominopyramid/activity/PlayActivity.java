@@ -7,11 +7,9 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -84,17 +82,6 @@ public class PlayActivity extends MvpAppCompatActivity implements NavigationView
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.play, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return item.getItemId() == R.id.action_settings || super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_game:
@@ -102,7 +89,7 @@ public class PlayActivity extends MvpAppCompatActivity implements NavigationView
                 mPlayActivityPresenter.startGame();
                 break;
             case R.id.nav_help:
-                Toast.makeText(this, "game rules", Toast.LENGTH_SHORT).show();
+                mPlayActivityPresenter.showRules(this);
                 break;
             case R.id.nav_exit:
                 finish();
@@ -124,5 +111,21 @@ public class PlayActivity extends MvpAppCompatActivity implements NavigationView
     @Override
     public void stopGame() {
 
+    }
+
+    @Override
+    public void showPick(int firstPick) {
+        for (ImageButton Domino : mDominoArray) {
+            if (Domino.getId() == firstPick) {
+                Domino.setBackgroundResource(getResources().getIdentifier("selection_bg", "drawable", getPackageName()));
+            }
+        }
+    }
+
+    @Override
+    public void cancelPick() {
+        for (ImageButton Domino : mDominoArray) {
+            Domino.setBackgroundResource(getResources().getIdentifier("colorTransparent", "colors", getPackageName()));
+        }
     }
 }
