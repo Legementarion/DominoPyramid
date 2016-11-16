@@ -88,6 +88,9 @@ public class PlayActivity extends MvpAppCompatActivity implements NavigationView
                 mPlayActivityPresenter.stopGame();
                 mPlayActivityPresenter.startGame();
                 break;
+            case R.id.nav_stats:
+                mPlayActivityPresenter.showStats(this);
+                break;
             case R.id.nav_help:
                 mPlayActivityPresenter.showRules(this);
                 break;
@@ -103,29 +106,23 @@ public class PlayActivity extends MvpAppCompatActivity implements NavigationView
         return true;
     }
 
-    @Override
-    public void startGame() {
-
-    }
-
-    @Override
-    public void stopGame() {
-
+    public void playerWin(){
+        mPlayActivityPresenter.win(this);
     }
 
     @Override
     public void showPick(int firstPick) {
-        for (ImageButton Domino : mDominoArray) {
-            if (Domino.getId() == firstPick) {
-                Domino.setBackgroundResource(getResources().getIdentifier("selection_bg", "drawable", getPackageName()));
+        for (ImageButton domino : mDominoArray) {
+            if (domino.getId() == firstPick) {
+                domino.setBackgroundResource(getResources().getIdentifier("selection_bg", "drawable", getPackageName()));
             }
         }
     }
 
     @Override
     public void cancelPick() {
-        for (ImageButton Domino : mDominoArray) {
-            Domino.setBackgroundResource(getResources().getIdentifier("colorTransparent", "colors", getPackageName()));
+        for (ImageButton domino : mDominoArray) {
+            domino.setBackgroundResource(getResources().getIdentifier("colorTransparent", "colors", getPackageName()));
         }
     }
 }

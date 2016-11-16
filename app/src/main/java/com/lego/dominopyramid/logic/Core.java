@@ -3,10 +3,12 @@ package com.lego.dominopyramid.logic;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
+import android.widget.ImageButton;
 
 import com.lego.dominopyramid.activity.PlayActivity;
 import com.lego.dominopyramid.utils.Node;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Core {
@@ -59,9 +61,16 @@ public class Core {
     }
 
     private void checkWin() {
-        Log.d("game complete", "checkWin: "+dominoTree.size());
-        if (dominoTree.size() == 0){
-            Log.d("game complete", "checkWin: ");
+        int keyWin = 0;
+        for (int i = 0; i < activity.mDominoArray.length; i++) {
+            if (activity.mDominoArray[i].getVisibility() == View.INVISIBLE) {
+                keyWin++;
+                if (keyWin == dominoTree.size() -1){
+                    activity.playerWin();
+                }
+            }else {
+                return;
+            }
         }
     }
 

@@ -16,6 +16,7 @@
     <string name="firstPick">%1$d</string>
     <string name="secondPick">%1$d</string>
     <string name="game_rules_title">Правила игры!</string>
+    <string name="game_stats_title">Статистика игры</string>
     <string name="ok">Ок</string>
     <string name="game_rules">C поля нужно выбирать кости сумма цифр которых равна 12. Победа засчитывается тогда, когда на поле не осталось костей.</string>
     <string name="new_game">Новая игра</string>
@@ -23,5 +24,12 @@
     <string name="stats">Статистика</string>
     <string name="help">Помощь</string>
     <string name="exit">Выход</string>
+    <string name="clear">Очистить</string>
+    <string name="played">Вы сыграли</string>
+    <string name="games">игр.</string>
+    <string name="wins">Вы выйграли</string>
+    <string name="win">Поздравляю!</string>
+    <string name="game_win">Вы выиграли игру!</string>
+    <string name="more">ещё</string>
 
 </resources>

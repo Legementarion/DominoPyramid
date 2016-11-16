@@ -4,10 +4,6 @@ import com.arellomobile.mvp.MvpView;
 
 public interface PlayActivityView extends MvpView {
 
-    void startGame();
-
-    void stopGame();
-
     void showPick(int firstPick);
 
     void cancelPick();
