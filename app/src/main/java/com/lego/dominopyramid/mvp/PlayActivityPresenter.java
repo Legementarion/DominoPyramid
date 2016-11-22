@@ -131,7 +131,7 @@ public class PlayActivityPresenter extends MvpPresenter<PlayActivityView> {
         int i;
         if (win) {
             i = Integer.parseInt(wins);
-            wins = "" + (i+1);
+            wins = "" + (i + 1);
         } else {
             i = Integer.parseInt(stats);
             stats = "" + (i + 1);
