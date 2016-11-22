@@ -33,7 +33,7 @@ public class PlayActivity extends MvpAppCompatActivity implements NavigationView
     @Override
     protected void onResume() {
         super.onResume();
-        mPlayActivityPresenter.startGame();
+        mPlayActivityPresenter.startGame(this);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class PlayActivity extends MvpAppCompatActivity implements NavigationView
         switch (item.getItemId()) {
             case R.id.nav_game:
                 mPlayActivityPresenter.stopGame();
-                mPlayActivityPresenter.startGame();
+                mPlayActivityPresenter.startGame(this);
                 break;
             case R.id.nav_stats:
                 mPlayActivityPresenter.showStats(this);
@@ -107,7 +107,7 @@ public class PlayActivity extends MvpAppCompatActivity implements NavigationView
     }
 
     public void playerWin(){
-        mPlayActivityPresenter.win(this);
+        mPlayActivityPresenter.playedWinGame(this, true);
     }
 
     @Override

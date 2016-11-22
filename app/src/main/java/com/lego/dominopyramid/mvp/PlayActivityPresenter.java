@@ -1,9 +1,9 @@
 package com.lego.dominopyramid.mvp;
 
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 
 import com.arellomobile.mvp.InjectViewState;
@@ -48,7 +48,8 @@ public class PlayActivityPresenter extends MvpPresenter<PlayActivityView> {
         }
     }
 
-    public void startGame() {
+    public void startGame(PlayActivity activity) {
+        increaseStats(activity, false);
         core.startGame();
     }
 
@@ -100,26 +101,8 @@ public class PlayActivityPresenter extends MvpPresenter<PlayActivityView> {
         ed.apply();
     }
 
-    public void win(PlayActivity activity) {
-        sPref = activity.getPreferences(MODE_PRIVATE);
-        String stats = sPref.getString(DOMINO_STATS, "");
-        String wins = sPref.getString(DOMINO_WINS, "");
-        if (stats.equals("") || stats.equals(null)) {
-            stats = "0";
-            wins = "0";
-        }
-
-        int i = Integer.parseInt(wins);
-        wins = "" + i;
-
-        i = Integer.parseInt(stats);
-        stats = "" + i;
-
-        SharedPreferences.Editor ed = sPref.edit();
-        ed.putString(DOMINO_STATS, stats);
-        ed.putString(DOMINO_WINS, wins);
-        ed.apply();
-
+    public void playedWinGame(PlayActivity activity, boolean win) {
+        increaseStats(activity, win);
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.win)
                 .setMessage(R.string.game_win)
@@ -128,10 +111,36 @@ public class PlayActivityPresenter extends MvpPresenter<PlayActivityView> {
                 .setNegativeButton(R.string.more,
                         (dialog, id) -> {
                             stopGame();
-                            startGame();
+                            startGame(activity);
                             dialog.cancel();
                         });
         AlertDialog alert = builder.create();
         alert.show();
     }
+
+    private void increaseStats(PlayActivity activity, boolean win) {
+        sPref = activity.getPreferences(MODE_PRIVATE);
+        String stats = sPref.getString(DOMINO_STATS, "");
+        String wins = sPref.getString(DOMINO_WINS, "");
+        Log.d("GAME", "increaseStats: " + stats);
+        if (stats.equals("") || stats.equals(null)) {
+            stats = "0";
+            wins = "0";
+        }
+        Log.d("GAME", "increaseStats: " + stats);
+        int i;
+        if (win) {
+            i = Integer.parseInt(wins);
+            wins = "" + (i+1);
+        } else {
+            i = Integer.parseInt(stats);
+            stats = "" + (i + 1);
+        }
+        SharedPreferences.Editor ed = sPref.edit();
+        ed.putString(DOMINO_STATS, stats);
+        ed.putString(DOMINO_WINS, wins);
+        ed.apply();
+    }
+
+
 }

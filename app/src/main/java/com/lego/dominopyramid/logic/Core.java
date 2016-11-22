@@ -1,14 +1,11 @@
 package com.lego.dominopyramid.logic;
 
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
-import android.widget.ImageButton;
 
 import com.lego.dominopyramid.activity.PlayActivity;
 import com.lego.dominopyramid.utils.Node;
 
-import java.util.Collections;
 import java.util.List;
 
 public class Core {
