@@ -57,5 +57,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     //other
+    compile 'com.jakewharton:butterknife:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'me.tatarka:gradle-retrolambda:3.3.0'
 }

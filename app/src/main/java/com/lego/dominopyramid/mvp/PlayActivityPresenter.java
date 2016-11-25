@@ -4,13 +4,18 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
+import android.widget.ImageButton;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.lego.dominopyramid.R;
 import com.lego.dominopyramid.activity.PlayActivity;
-import com.lego.dominopyramid.logic.Core;
+import com.lego.dominopyramid.logic.Game;
+import com.lego.dominopyramid.utils.Node;
+
+import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -18,15 +23,16 @@ import static android.content.Context.MODE_PRIVATE;
 public class PlayActivityPresenter extends MvpPresenter<PlayActivityView> {
 
     private SharedPreferences sPref;
-    private int firstPick, secondPick;
-    private Core core;
+    private SparseArray<Node> dominoTree = new SparseArray<>();
+    private Game game;
 
-    private static final String DOMINO_STATS = "domino_stats";
+    private int firstPick;
+    private int secondPick;
+
+    private static final String DOMINO_STATS = "domino_stats";      //for shared preference
     private static final String DOMINO_WINS = "domino_wins";
-
-    public void init(PlayActivity activity) {
-        core = Core.getInstance(activity);
-    }
+    private PlayActivity mActivity;
+    private List<ImageButton> mDominoArray;
 
     public void dominoPress(View view) {
         if (firstPick == 0) {
@@ -37,7 +43,7 @@ public class PlayActivityPresenter extends MvpPresenter<PlayActivityView> {
             getViewState().showPick(secondPick);
             if (firstPick != 0 && secondPick != 0) {
                 if (firstPick != secondPick) {
-                    core.doPick(firstPick, secondPick);
+                    doPick(firstPick, secondPick);
                 }
                 new Handler().postDelayed(() -> {
                     firstPick = 0;
@@ -50,11 +56,21 @@ public class PlayActivityPresenter extends MvpPresenter<PlayActivityView> {
 
     public void startGame(PlayActivity activity) {
         increaseStats(activity, false);
-        core.startGame();
+        game = new Game();
+        for (int i = 0; i < mDominoArray.size(); i++) {
+            dominoTree.put(mDominoArray.get(mDominoArray.size() - i - 1).getId(), game.tree[i]);
+        }
+        aDraw();
     }
 
     public void stopGame() {
-        core.stopGame();
+        game = null;
+        dominoTree = new SparseArray<>();
+        for (int i = 0; i < mDominoArray.size(); i++) {
+            mDominoArray.get(i).setEnabled(false);
+            mDominoArray.get(i).setVisibility(View.VISIBLE);
+            mDominoArray.get(i).setImageResource(mActivity.getResources().getIdentifier("title", "drawable", mActivity.getPackageName()));
+        }
     }
 
     public void showRules(PlayActivity activity) {
@@ -131,10 +147,10 @@ public class PlayActivityPresenter extends MvpPresenter<PlayActivityView> {
         int i;
         if (win) {
             i = Integer.parseInt(wins);
-            wins = "" + (i + 1);
+            wins = Integer.toString(i + 1);
         } else {
             i = Integer.parseInt(stats);
-            stats = "" + (i + 1);
+            stats = Integer.toString(i + 1);
         }
         SharedPreferences.Editor ed = sPref.edit();
         ed.putString(DOMINO_STATS, stats);
@@ -142,5 +158,84 @@ public class PlayActivityPresenter extends MvpPresenter<PlayActivityView> {
         ed.apply();
     }
 
+    public void doPick(int value, int value1) {
+        int resultValue = dominoTree.get(value).value +
+                dominoTree.get(value).type.getIDByType() +
+                dominoTree.get(value1).type.getIDByType() +
+                dominoTree.get(value1).value;
+        if (resultValue == 12) {
+            dominoTree.get(value).setVisible(false);
+            dominoTree.get(value1).setVisible(false);
+            removeRelation(dominoTree.get(value));
+            removeRelation(dominoTree.get(value1));
+            aDraw();
+        }
+        checkWin();
+    }
 
+    private void checkWin() {
+        int keyWin = 0;
+        for (int i = 0; i < mDominoArray.size(); i++) {
+            if (mDominoArray.get(i).getVisibility() == View.INVISIBLE) {
+                keyWin++;
+                if (keyWin == dominoTree.size() -1){
+                    mActivity.playerWin();
+                }
+            }else {
+                return;
+            }
+        }
+    }
+
+    private void aDraw() {
+        for (int i = 0; i < mDominoArray.size(); i++) {
+            if (dominoTree.keyAt(i) == mDominoArray.get(i).getId()) {
+                if (dominoTree.get(mDominoArray.get(i).getId()).isLive()) {
+                    if (dominoTree.get(mDominoArray.get(i).getId()).isVisible()) {
+                        String buf = "c" + "_" + dominoTree.get(mDominoArray.get(i).getId())
+                                .type + "_" + dominoTree.get(mDominoArray.get(i).getId()).value;
+                        mDominoArray.get(i).setImageResource(mActivity.getResources().getIdentifier(buf, "drawable", mActivity.getPackageName()));
+                        mDominoArray.get(i).setEnabled(true);
+                        mDominoArray.get(i).setVisibility(View.VISIBLE);
+                    } else {
+                        mDominoArray.get(i).setVisibility(View.INVISIBLE);
+                        mDominoArray.get(i).setEnabled(false);
+                    }
+                }
+            }
+        }
+    }
+
+    private void removeRelation(Node root) {
+        List<Node> tempList;
+        //parent
+        tempList = root.getParent();
+        if (tempList != null) {
+            for (int i = 0; i < tempList.size(); i++) {
+                for (int j = 0; j < dominoTree.size(); j++) {
+                    int key = dominoTree.keyAt(j);
+                    if (dominoTree.get(key) == (tempList.get(i))) {
+                        dominoTree.get(key).getChildren().remove(root);
+                    }
+                }
+            }
+        }
+        //children
+        tempList = root.getChildren();
+        if (tempList != null) {
+            for (int i = 0; i < tempList.size(); i++) {
+                for (int j = 0; j < dominoTree.size(); j++) {
+                    int key = dominoTree.keyAt(j);
+                    if (dominoTree.get(key) == (tempList.get(i))) {
+                        dominoTree.get(key).getParent().remove(root);
+                    }
+                }
+            }
+        }
+    }
+
+    public void init(PlayActivity playActivity, List<ImageButton> dominoArray) {
+        mActivity = playActivity;
+        mDominoArray = dominoArray;
+    }
 }

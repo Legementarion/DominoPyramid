@@ -1,13 +1,13 @@
 package com.lego.dominopyramid.utils;
 
 public enum Types {
-    Zero("0"),
-    One("1"),
-    Two("2"),
-    Three("3"),
-    Four("4"),
-    Five("5"),
-    Six("6");
+    ZERO("0"),
+    ONE("1"),
+    TWO("2"),
+    THREE("3"),
+    FOUR("4"),
+    FIVE("5"),
+    SIX("6");
 
     private String id;
 

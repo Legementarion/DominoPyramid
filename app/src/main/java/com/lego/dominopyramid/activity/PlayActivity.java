@@ -7,8 +7,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageButton;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
@@ -17,12 +17,31 @@ import com.lego.dominopyramid.R;
 import com.lego.dominopyramid.mvp.PlayActivityPresenter;
 import com.lego.dominopyramid.mvp.PlayActivityView;
 
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
+
 public class PlayActivity extends MvpAppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PlayActivityView {
 
     @InjectPresenter
     PlayActivityPresenter mPlayActivityPresenter;
 
-    public ImageButton[] mDominoArray = new ImageButton[28];
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+    @BindViews({R.id.imageButton1, R.id.imageButton2, R.id.imageButton3, R.id.imageButton4, R.id.imageButton5,
+            R.id.imageButton6, R.id.imageButton7, R.id.imageButton8, R.id.imageButton9, R.id.imageButton10,
+            R.id.imageButton11, R.id.imageButton12, R.id.imageButton13, R.id.imageButton14, R.id.imageButton15,
+            R.id.imageButton16, R.id.imageButton17, R.id.imageButton18, R.id.imageButton19, R.id.imageButton20,
+            R.id.imageButton21, R.id.imageButton22, R.id.imageButton23, R.id.imageButton24, R.id.imageButton25,
+            R.id.imageButton26, R.id.imageButton27, R.id.imageButton28})
+    List<ImageButton> mDominoArray;
+
+    @BindView(R.id.nav_view)
+    NavigationView mNavView;
 
     @Override
     protected void onStop() {
@@ -40,36 +59,22 @@ public class PlayActivity extends MvpAppCompatActivity implements NavigationView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
+        ButterKnife.bind(this);
 
-        mPlayActivityPresenter.init(this);
 
-        for (int i = 1; i <= 28; i++) {
-            if ((mDominoArray[i - 1] = (ImageButton) findViewById(getResources().getIdentifier("imageButton" + i, "id", getPackageName()))) == null) {
-                return;
-            }
-            mDominoArray[i - 1].setEnabled(false);
-            mDominoArray[i - 1].setOnClickListener(myOnClickListener);
+        for (ImageButton imageButton : mDominoArray) {
+            imageButton.setEnabled(false);
+            imageButton.setOnClickListener(view -> mPlayActivityPresenter.dominoPress(view));
         }
+        mPlayActivityPresenter.init(this, mDominoArray);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        setSupportActionBar(mToolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mNavView.setNavigationItemSelectedListener(this);
     }
-
-    View.OnClickListener myOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            mPlayActivityPresenter.dominoPress(view);
-        }
-    };
 
     @Override
     public void onBackPressed() {
@@ -106,7 +111,7 @@ public class PlayActivity extends MvpAppCompatActivity implements NavigationView
         return true;
     }
 
-    public void playerWin(){
+    public void playerWin() {
         mPlayActivityPresenter.playedWinGame(this, true);
     }
 
